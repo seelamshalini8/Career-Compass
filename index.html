@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career Compass</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(-45deg,#4facfe,#00f2fe,#43e97b,#38f9d7);
+    background-size:400% 400%;
+    animation:gradientBG 10s ease infinite;
+    color:#fff;
+}
+
+@keyframes gradientBG{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+.section{
+    display:none;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    padding:20px;
+}
+
+.glass{
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(12px);
+    border-radius:20px;
+    padding:40px;
+    width:95%;
+    max-width:900px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.3);
+}
+
+h1{
+    font-size:50px;
+    text-align:center;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+h3{
+    margin-top:25px;
+}
+
+ul{
+    margin-left:20px;
+    line-height:1.8;
+}
+
+button{
+    margin-top:20px;
+    padding:10px 25px;
+    border:none;
+    border-radius:30px;
+    background:#ffe600;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+.cards{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.card{
+    background:rgba(255,255,255,0.25);
+    padding:20px;
+    border-radius:15px;
+    width:220px;
+    text-align:center;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    background:rgba(255,255,255,0.4);
+}
+
+#resultSection{
+    align-items:flex-start;
+}
+</style>
+</head>
+
+<body>
+
+    <!-- SETTINGS LOGO -->
+<div id="aiSettingsLogo" style="position:fixed; top:20px; right:20px; font-size:32px; cursor:pointer; z-index:1000;">⚙️</div>
+
+<!-- SETTINGS DROPDOWN -->
+<div id="aiSettingsDropdown" style="display:none; position:fixed; top:60px; right:20px; 
+    background:rgba(0,0,0,0.9); color:#fff; border-radius:12px; overflow:hidden; min-width:160px; font-family:'Poppins', sans-serif; z-index:999;">
+    
+    <a href="#" class="aiDropdownItem" id="menuHome">Home</a>
+    <a href="#" class="aiDropdownItem" id="menuAbout">About</a>
+    <a href="#" class="aiDropdownItem" id="menuSignIn">Sign In</a>
+    <a href="#" class="aiDropdownItem" id="menuLogin">Login</a>
+</div>
+
+<!-- MODALS -->
+<div id="aboutSection" class="modalSection" style="display:none;">
+    <div class="glass" style="text-align:center;">
+        <h2>About Our Project</h2>
+        <p>Career Compass helps students choose careers based on their education level, interests, and goals.</p>
+        <button onclick="closeModal('aboutSection')">Close</button>
+    </div>
+</div>
+
+<div id="signInSection" class="modalSection" style="display:none;">
+    <div class="glass" style="text-align:center;">
+        <h2>Sign Up</h2>
+        <input type="text" id="regName" placeholder="Name" /><br><br>
+        <input type="email" id="regEmail" placeholder="Email" /><br><br>
+        <input type="password" id="regPass" placeholder="Password" /><br><br>
+        <button onclick="registerUser()">Register</button>
+        <button onclick="closeModal('signInSection')">Cancel</button>
+    </div>
+</div>
+
+<div id="loginSection" class="modalSection" style="display:none;">
+    <div class="glass" style="text-align:center;">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email" /><br><br>
+        <input type="password" id="loginPass" placeholder="Password" /><br><br>
+        <button onclick="loginUser()">Login</button>
+        <button onclick="closeModal('loginSection')">Cancel</button>
+    </div>
+</div>
+
+<style>
+.modalSection{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:fixed;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    z-index:1000;
+}
+.aiDropdownItem{
+    display:block;
+    padding:10px 15px;
+    color:#fff;
+    text-decoration:none;
+    transition:0.3s;
+}
+.aiDropdownItem:hover{
+    background:rgba(255,255,255,0.1);
+}
+</style>
+
+<script>
+// Elements
+const settingsLogo = document.getElementById("aiSettingsLogo");
+const settingsDropdown = document.getElementById("aiSettingsDropdown");
+
+// Toggle Dropdown
+settingsLogo.onclick = (e)=>{
+    e.stopPropagation();
+    settingsDropdown.style.display = settingsDropdown.style.display==='block' ? 'none' : 'block';
+}
+
+// Home
+document.getElementById("menuHome").onclick = (e)=>{
+    e.preventDefault();
+    goHome();
+    settingsDropdown.style.display='none';
+}
+
+// About
+document.getElementById("menuAbout").onclick = (e)=>{
+    e.preventDefault();
+    settingsDropdown.style.display='none';
+    document.getElementById("aboutSection").style.display='flex';
+}
+
+// Sign In
+document.getElementById("menuSignIn").onclick = (e)=>{
+    e.preventDefault();
+    settingsDropdown.style.display='none';
+    document.getElementById("signInSection").style.display='flex';
+}
+
+// Login
+document.getElementById("menuLogin").onclick = (e)=>{
+    e.preventDefault();
+    settingsDropdown.style.display='none';
+    document.getElementById("loginSection").style.display='flex';
+}
+
+// Close modal helper
+function closeModal(id){
+    document.getElementById(id).style.display='none';
+}
+
+// Register function
+function registerUser(){
+    const name = document.getElementById("regName").value;
+    const email = document.getElementById("regEmail").value;
+    const pass = document.getElementById("regPass").value;
+    if(name && email && pass){
+        alert("Registered Successfully!");
+        closeModal('signInSection');
+        goHome();
+    } else {
+        alert("Please fill all fields!");
+    }
+}
+
+// Login function
+function loginUser(){
+    const email = document.getElementById("loginEmail").value;
+    const pass = document.getElementById("loginPass").value;
+    if(email && pass){
+        alert("Login Successful!");
+        closeModal('loginSection');
+        goHome();
+    } else {
+        alert("Please fill all fields!");
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener("click", ()=>{
+    settingsDropdown.style.display='none';
+});
+</script>
+<div class="section" id="home" style="display:flex;">
+    <div class="glass" style="text-align:center;">
+        <h1>Career Compass 🚀</h1>
+        <p>Your Future Starts Here</p>
+        <button onclick="start()">Get Started</button>
+    </div>
+</div>
+
+<div class="section" id="education">
+    <div class="glass" style="text-align:center;">
+        <h2>Select Education Level</h2>
+        <div class="cards">
+            <div class="card" onclick="showCareer('10th')">After 10th</div>
+            <div class="card" onclick="showCareer('Diploma')">After Diploma</div>
+            <div class="card" onclick="showCareer('Degree')">After Degree</div>
+        </div>
+        <button onclick="goHome()">Back</button>
+    </div>
+</div>
+
+<div class="section" id="resultSection">
+    <div class="glass" id="resultContent"></div>
+</div>
+
+<script>
+
+function hideAll(){
+    document.getElementById("home").style.display="none";
+    document.getElementById("education").style.display="none";
+    document.getElementById("resultSection").style.display="none";
+}
+
+function goHome(){
+    hideAll();
+    document.getElementById("home").style.display="flex";
+}
+
+function start(){
+    hideAll();
+    document.getElementById("education").style.display="flex";
+}
+
+function showCareer(level){
+    hideAll();
+    let content=document.getElementById("resultContent");
+
+    if(level==="10th"){
+        content.innerHTML=`
+
+<h2>📘 Career Options After 10th</h2>
+
+<h3>1️⃣ Intermediate (11th & 12th) – Most Common Option</h3>
+<p>This is the best option if you want to continue higher education like Engineering, Medical, Degree, CA, Government Jobs, etc.</p>
+
+<ul>
+<li><b>MPC (Maths, Physics, Chemistry)</b> – Engineering, NDA, Architecture. After MPC → B.Tech / NDA / Degree.</li>
+<li><b>BiPC (Biology, Physics, Chemistry)</b> – MBBS, BDS, B.Pharmacy, Nursing, Physiotherapy.</li>
+<li><b>CEC (Civics, Economics, Commerce)</b> – B.Com, BBA, CA, CS, Banking.</li>
+<li><b>MEC (Maths, Economics, Commerce)</b> – Business, Statistics, Data-related fields.</li>
+<li><b>HEC (History, Economics, Civics)</b> – Arts, Law, Civil Services.</li>
+</ul>
+
+<p><b>👉 Who should choose Intermediate?</b><br>
+Students who want a professional degree and long-term career growth.</p>
+
+<h3>2️⃣ Polytechnic / Diploma Courses (Technical Path)</h3>
+<ul>
+<li>Mechanical Engineering</li>
+<li>Civil Engineering</li>
+<li>Electrical Engineering</li>
+<li>Computer Engineering</li>
+<li>Electronics & Communication</li>
+<li>Join B.Tech 2nd Year (Lateral Entry)</li>
+<li>Work as Junior Engineer or Technician</li>
+<li>Prepare for Government JE jobs</li>
+</ul>
+
+<p><b>👉 Best for students who like practical work and technical skills.</b></p>
+
+<h3>3️⃣ ITI (Industrial Training Institute)</h3>
+<ul>
+<li>Electrician</li>
+<li>Fitter</li>
+<li>Welder</li>
+<li>Motor Mechanic</li>
+<li>Computer Operator</li>
+<li>Work in industries</li>
+<li>Apply for Government technical jobs</li>
+<li>Start your own service business</li>
+</ul>
+
+<p><b>👉 Best for students who want quick job opportunities.</b></p>
+
+<h3>4️⃣ Skill-Based & Short-Term Courses</h3>
+<ul>
+<li>Web Development</li>
+<li>Graphic Designing</li>
+<li>Digital Marketing</li>
+<li>Animation</li>
+<li>Mobile Repairing</li>
+<li>Freelancing</li>
+<li>Private jobs</li>
+<li>Starting a startup</li>
+</ul>
+
+<p><b>👉 Best for creative and self-learning students.</b></p>
+
+<h3>🔹 Government Jobs Available After 10th</h3>
+<ul>
+<li>Police Constable</li>
+<li>Railway Group D</li>
+<li>Indian Army (Soldier GD)</li>
+<li>Post Office (GDS)</li>
+<li>Forest Guard</li>
+<li>Multi Tasking Staff (MTS)</li>
+</ul>
+
+<p><b>👉 Salary Range:</b> ₹18,000 – ₹30,000 per month (approx.)</p>
+
+<button onclick="start()">Back</button>
+        `;
+    }
+
+    else if(level==="Diploma"){
+content.innerHTML=`
+
+<h2>🎓 What Is the Next Step After Diploma?</h2>
+
+<p>After completing a Diploma (Polytechnic), you have 5 major career options:</p>
+
+<h3>1️⃣ B.Tech (Lateral Entry) – Most Popular Option</h3>
+<p>This is the best and most recommended path.</p>
+
+<ul>
+<li>You can directly join B.Tech 2nd Year (Lateral Entry).</li>
+<li>Available for Mechanical, Civil, EEE, ECE, CSE, etc.</li>
+<li>After B.Tech → eligible for M.Tech, MBA, Government higher posts.</li>
+<li>Better salary & career growth.</li>
+</ul>
+
+<p><b>👉 Best for students who want higher qualification and high salary jobs.</b></p>
+
+<h3>2️⃣ Get a Job in Core Field</h3>
+<ul>
+<li>Junior Engineer (JE)</li>
+<li>Site Supervisor</li>
+<li>Technician</li>
+<li>Quality Inspector</li>
+<li>Machine Operator</li>
+</ul>
+
+<p>💰 Salary: ₹15,000 – ₹30,000 per month (starting)</p>
+
+<h3>3️⃣ Government Jobs After Diploma</h3>
+<ul>
+<li>SSC JE</li>
+<li>State JE</li>
+<li>Railway JE</li>
+<li>PSU Technical Jobs</li>
+<li>Electricity Board Jobs</li>
+<li>Defense Technical Posts</li>
+</ul>
+
+<p>💰 Salary: ₹25,000 – ₹45,000+ per month</p>
+
+<h3>4️⃣ IT & Software Field</h3>
+<ul>
+<li>Full Stack Development</li>
+<li>Python Programming</li>
+<li>Data Science</li>
+<li>Cyber Security</li>
+<li>Cloud Computing</li>
+</ul>
+
+<p>💰 Salary: ₹3 – ₹8 LPA</p>
+
+<h3>5️⃣ Start Your Own Business</h3>
+<ul>
+<li>Electrical Services</li>
+<li>Construction Contracting</li>
+<li>Computer Repair Center</li>
+<li>Fabrication Workshop</li>
+<li>Technical Consultancy</li>
+</ul>
+
+<button onclick="start()">Back</button>
+`;
+}
+
+    else{
+        content.innerHTML=`
+        <h2>🎓 What Is the Next Step After Degree?</h2>
+
+<p>After completing your Degree (B.Tech / B.Sc / B.Com / BBA / BA), you have 5 major career paths:</p>
+
+<h3>1️⃣ Get a Job (Private Sector)</h3>
+
+<h4>🔹 IT & Software Jobs</h4>
+<ul>
+<li>Software Developer</li>
+<li>Full Stack Developer</li>
+<li>Data Analyst</li>
+<li>AI / ML Engineer</li>
+<li>Cyber Security Analyst</li>
+</ul>
+
+<p>💰 Salary: ₹3 – ₹12 LPA (depends on skills & company)</p>
+
+<h4>🔹 Core Field Jobs (Non-IT)</h4>
+<ul>
+<li>Mechanical Engineer</li>
+<li>Civil Site Engineer</li>
+<li>Accountant</li>
+<li>HR Executive</li>
+<li>Marketing Executive</li>
+</ul>
+
+<p><b>👉 Best for students who want immediate income and work experience.</b></p>
+
+<h3>2️⃣ Government Jobs</h3>
+
+<h4>🔹 Central Government Exams</h4>
+<ul>
+<li>UPSC Civil Services</li>
+<li>SSC CGL</li>
+<li>Banking (IBPS, SBI PO)</li>
+<li>Railway Jobs</li>
+</ul>
+
+<h4>🔹 State Government Exams</h4>
+<ul>
+<li>Group 1, Group 2</li>
+<li>Police SI</li>
+<li>State PSC Jobs</li>
+</ul>
+
+<p>💰 Salary: ₹30,000 – ₹1,00,000+ per month (depends on post)</p>
+
+<p><b>👉 Best for students who want prestige + job security.</b></p>
+
+<h3>3️⃣ Higher Education (Post Graduation)</h3>
+
+<h4>🔹 Technical & Science</h4>
+<ul>
+<li>M.Tech</li>
+<li>M.Sc</li>
+<li>MCA</li>
+</ul>
+
+<h4>🔹 Management</h4>
+<ul>
+<li>MBA</li>
+</ul>
+
+<h4>🔹 Law & Arts</h4>
+<ul>
+<li>LLB (if not done)</li>
+<li>LLM</li>
+</ul>
+
+<p><b>👉 Best for students who want advanced knowledge and leadership positions.</b></p>
+
+<h3>4️⃣ Prepare for Competitive Exams</h3>
+<ul>
+<li>GATE (for M.Tech / PSU jobs)</li>
+<li>CAT (for MBA in top colleges)</li>
+<li>NET (for lecturer jobs)</li>
+</ul>
+
+<p><b>👉 Best for students targeting top institutes and high-level careers.</b></p>
+
+<h3>5️⃣ Start Your Own Business / Startup</h3>
+<ul>
+<li>Tech Startup</li>
+<li>E-commerce Business</li>
+<li>Consultancy</li>
+<li>Digital Marketing Agency</li>
+<li>Family Business Expansion</li>
+</ul>
+
+<p><b>👉 Best for students who want independence and unlimited growth potential.</b></p>
+
+<button onclick="start()">Back</button>
+        `;
+    }
+
+    document.getElementById("resultSection").style.display="flex";
+}
+
+
+</script>
+
+</body>
+</html>
